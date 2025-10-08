@@ -1,2 +1,3 @@
 # Configuration file
 debug=true
+port=8080
