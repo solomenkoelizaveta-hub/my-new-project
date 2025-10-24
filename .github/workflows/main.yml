@@ -47,11 +47,11 @@ jobs:
           python manage.py check --fail-level WARNING || true
         fi
         
-    - name: Run basic tests
+    - name: 🧪 Run tests
       run: |
         if [ -f "manage.py" ]; then
-          # Запустить тесты если они есть, иначе пропустить
-          python manage.py test || echo "Tests failed or no tests found"
+          echo "Running custom test suite..."
+          ./run_tests.sh
         else
           echo "No manage.py found - skipping tests"
         fi
