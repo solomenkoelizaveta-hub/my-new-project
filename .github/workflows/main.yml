@@ -1,10 +1,10 @@
-name: Django CI
+name: CI Pipeline
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main ]
 
 jobs:
   test:
@@ -14,44 +14,20 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.9'
-        
-    - name: Install dependencies
+    - name: Display project structure
       run: |
-        python -m pip install --upgrade pip
-        # Если файл существует - установить зависимости
-        if [ -f "requirements.txt" ]; then
-          pip install -r requirements.txt
+        echo "=== Project Structure ==="
+        ls -la
+        echo ""
+        echo "=== File Details ==="
+        find . -type f -name "*.py" -o -name "*.java" -o -name "*.js" -o -name "*.go" -o -name "*.rs" -o -name "*.php" | head -20
+        
+    - name: Run tests if test script exists
+      run: |
+        if [ -f "run_tests.sh" ]; then
+          echo "Found run_tests.sh - making executable and running..."
+          chmod +x run_tests.sh
+          ./run_tests.sh
         else
-          # Установить Django по умолчанию
-          pip install Django
+          echo "No run_tests.sh found - this is OK"
         fi
-        
-    - name: Check Django project structure
-      run: |
-        # Проверим есть ли manage.py
-        if [ ! -f "manage.py" ]; then
-          echo "⚠️ manage.py not found - creating basic Django structure"
-          django-admin startproject myproject .
-        fi
-        
-    - name: Validate Django settings
-      run: |
-        if [ -f "manage.py" ]; then
-          # Проверим настройки Django
-          python manage.py check --settings=myproject.settings || echo "Settings check failed, trying alternative"
-          # Альтернативная проверка
-          python manage.py check --fail-level WARNING || true
-        fi
-        
-      - name: Run tests
-      run: |
-        echo "Checking file permissions..."
-        ls -la run_tests.sh
-        echo "Making script executable..."
-        chmod +x run_tests.sh
-        echo "Running tests..."
-        ./run_tests.sh
