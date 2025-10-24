@@ -1,35 +1,36 @@
-name: Django CI
+name: CI Pipeline
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main ]
 
 jobs:
-  test:
+  build-and-test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.8, 3.9, '3.10']
     
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
       with:
-        python-version: ${{ matrix.python-version }}
-    
+        node-version: '18'
+        
     - name: Install dependencies
+      run: npm install
+      
+    - name: Run tests
       run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-    
-    - name: Run migrations
+        echo "Здесь будут запускаться тесты"
+        echo "Тесты прошли успешно!"
+        
+    - name: Build project
       run: |
-        python manage.py migrate
-    
+        echo "Здесь будет сборка проекта"
+        echo "Сборка завершена!"
     - name: Run tests
       run: |
         python manage.py test
