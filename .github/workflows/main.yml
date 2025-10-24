@@ -1,13 +1,13 @@
-name: Django CI
+name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, development, release/* ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main ]
 
 jobs:
-    test:
+  test:
     runs-on: ubuntu-latest
     
     steps:
@@ -25,7 +25,6 @@ jobs:
       
     - name: Run tests
       run: |
-        # Даем права на выполнение и запускаем скрипт
         if [ -f "run_tests.sh" ]; then
           echo "Setting execute permissions for test script..."
           chmod +x run_tests.sh
@@ -35,6 +34,34 @@ jobs:
           echo "Custom test script not found, running default tests..."
           npm test
         fi
+      
+    - name: Run linting
+      run: npm run lint
+
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build project
+      run: npm run build
+      
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-output
+        path: dist/
       
     - name: Run linting
       run: npm run lint
