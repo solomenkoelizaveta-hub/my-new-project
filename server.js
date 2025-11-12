@@ -6,6 +6,9 @@ const server = http.createServer((req, res) => {
   });
   res.end(`
     <html>
+      <head>
+        <meta charset="UTF-8">  <!-- ← ДОБАВЬТЕ эту строку -->
+      </head>
       <body>
         <h1>Мое приложение ОБНОВЛЕНО!</h1>
         <p>Версия: 2.0.0</p>
