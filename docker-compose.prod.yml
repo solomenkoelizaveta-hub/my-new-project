@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   my-app:
-    image: ваш-docker-username/my-new-project:latest
+    image: solomenko/my-new-project:latest
     container_name: my-new-project
     restart: unless-stopped
     ports:
