@@ -2,9 +2,9 @@ name: CI/CD Pipeline with Documentation and Deployment
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]  # ← Теперь main
   pull_request:
-    branches: [ main ]
+    branches: [main]  # ← Теперь main
   release:
     types: [published]
 
@@ -51,15 +51,13 @@ jobs:
         # 🚀 Автоматически сгенерированная документация
         
         ## Информация о сборке
-        - **Ветка**: ${{ github.ref }}
+        - **Ветка**: main
         - **Коммит**: ${{ github.sha }}
         - **Дата сборки**: $(date)
         - **Статус**: ✅ Успешно
         
         ## Структура проекта
         EOF
-        
-        echo "✅ Основной файл документации создан!"
         
     - name: Add file structure to docs
       run: |
@@ -75,7 +73,7 @@ jobs:
         echo "## 📊 Отчет о тестировании" >> README_AUTO.md
         echo "Тесты завершены: ✅ УСПЕШНО" >> README_AUTO.md
         echo "Дата проверки: $(date)" >> README_AUTO.md
-        echo "Ветка: ${{ github.ref }}" >> README_AUTO.md
+        echo "Ветка: main" >> README_AUTO.md
         
     - name: Add CD information to docs
       run: |
@@ -95,11 +93,6 @@ jobs:
         name: auto-documentation
         path: README_AUTO.md
         retention-days: 30
-        
-    - name: Show documentation preview
-      run: |
-        echo "🎉 Документация успешно создана!"
-        head -20 README_AUTO.md
 
   deploy:
     runs-on: ubuntu-latest
@@ -119,23 +112,12 @@ jobs:
         
     - name: Build and push Docker image
       run: |
-        # Собираем образ с тегом latest
         docker build -t ${{ secrets.DOCKER_USERNAME }}/my-new-project:latest .
         docker push ${{ secrets.DOCKER_USERNAME }}/my-new-project:latest
         
-        # Также пушим с тегом версии
         VERSION=${{ github.event.release.tag_name }}
         docker tag ${{ secrets.DOCKER_USERNAME }}/my-new-project:latest ${{ secrets.DOCKER_USERNAME }}/my-new-project:$VERSION
         docker push ${{ secrets.DOCKER_USERNAME }}/my-new-project:$VERSION
-        
-    - name: Update deployment documentation
-      run: |
-        echo "" >> README_AUTO.md
-        echo "## 🚀 Информация о деплое" >> README_AUTO.md
-        echo "- **Версия**: ${{ github.event.release.tag_name }}" >> README_AUTO.md
-        echo "- **Docker образ**: ${{ secrets.DOCKER_USERNAME }}/my-new-project:latest" >> README_AUTO.md
-        echo "- **Дата деплоя**: $(date)" >> README_AUTO.md
-        echo "- **Статус**: ✅ Успешно развернуто" >> README_AUTO.md
         
     - name: Deployment success notification
       run: |
@@ -155,7 +137,7 @@ jobs:
         echo "=========================================="
         echo "📅 Дата завершения: $(date)"
         echo "📁 Репозиторий: ${{ github.repository }}"
-        echo "🌿 Ветка: ${{ github.ref }}"
+        echo "🌿 Ветка: main"
         echo "🔗 Коммит: ${{ github.sha }}"
         echo ""
         echo "✅ ВЫПОЛНЕННЫЕ ЗАДАЧИ:"
@@ -167,8 +149,3 @@ jobs:
         echo "5. ✅ Завершение лабораторной работы"
         echo ""
         echo "📊 СТАТУС: ВСЕ ЗАДАЧИ ВЫПОЛНЕНЫ УСПЕШНО"
-        
-    - name: Create completion badge
-      run: |
-        echo "🟢 STATUS: LAB COMPLETED SUCCESSFULLY" > lab-status.txt
-        echo "Timestamp: $(date)" >> lab-status.txt
