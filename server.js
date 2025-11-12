@@ -5,9 +5,10 @@ const server = http.createServer((req, res) => {
   res.end(`
     <html>
       <body>
-        <h1>Мое приложение работает!</h1>
-        <p>Версия: 1.0.0</p>
+        <h1>Мое приложение ОБНОВЛЕНО!</h1>
+        <p>Версия: 2.0.0</p>
         <p>Время запуска: ${new Date().toISOString()}</p>
+        <p>Это автоматическое обновление через Watchtower!</p>
       </body>
     </html>
   `);
